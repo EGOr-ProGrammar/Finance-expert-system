@@ -1,0 +1,41 @@
+# --- Результаты сборки (Build) ---
+# Исключаем папку build, так как она содержит объектные файлы и исполняемые бинарники
+build/
+bin/
+obj/
+*.exe
+*.out
+*.app
+
+# --- CMake ---
+# Временные файлы конфигурации CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# --- Visual Studio Code ---
+# Локальные настройки редактора (пути к компилятору, отладчик)
+.vscode/*
+!.vscode/extensions.json
+.history/
+
+# --- Библиотеки и зависимости ---
+# Если nlohmann/json был скачан вручную (json.hpp), 
+# его обычно оставляют в репозитории, если он header-only. 
+# Но если используются внешние менеджеры пакетов:
+_deps/
+
+# --- Системные файлы ---
+.DS_Store
+Thumbs.db
+
+# --- Данные пользователя ---
+# Если вы планируете хранить секретные данные или локальные тесты 
+# отдельно от основной базы знаний
+*.log
+GEMINI.md

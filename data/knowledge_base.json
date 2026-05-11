@@ -1,0 +1,41 @@
+{
+  "variables": [
+    {
+      "name": "Profitability",
+      "terms": [
+        { "name": "Low", "type": "gaussian", "params": { "c": 5.0, "sigma": 5.0 } },
+        { "name": "High", "type": "gaussian", "params": { "c": 25.0, "sigma": 10.0 } }
+      ]
+    },
+    {
+      "name": "Risk",
+      "terms": [
+        { "name": "Low", "type": "gaussian", "params": { "c": 2.0, "sigma": 3.0 } },
+        { "name": "High", "type": "gaussian", "params": { "c": 8.0, "sigma": 3.0 } }
+      ]
+    },
+    {
+      "name": "Decision",
+      "terms": [
+        { "name": "Reject", "center": 0.0 },
+        { "name": "Invest", "center": 10.0 }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "conditions": [
+        { "variable": "Profitability", "term": "High" },
+        { "variable": "Risk", "term": "Low" }
+      ],
+      "output": { "variable": "Decision", "term": "Invest" }
+    },
+    {
+      "conditions": [
+        { "variable": "Profitability", "term": "Low" },
+        { "variable": "Risk", "term": "High" }
+      ],
+      "output": { "variable": "Decision", "term": "Reject" }
+    }
+  ]
+}
