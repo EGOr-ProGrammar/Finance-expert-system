@@ -14,12 +14,22 @@ public:
     GeneralizedGaussianFunction(double c, double s, double b_val)
         : center(c), sigma(s), b(b_val) {}
 
-    // Расчет по формуле mu(x) = exp(-((x-c)/sigma)^(2b))
     [[nodiscard]] double getMembership(double x) const override
     {
         if (sigma == 0.0)
             return (x == center) ? 1.0 : 0.0;
-        double arg = std::abs((x - center) / sigma); // Модуль предотвращает NaN при дробном 2b и отрицательном основании
+        double arg = std::abs((x - center) / sigma);
         return std::exp(-std::pow(arg, 2.0 * b));
+    }
+
+    [[nodiscard]] nlohmann::json serialize() const override {
+        return {
+            {"type", "generalized_gaussian"},
+            {"params", {
+                {"c", center},
+                {"sigma", sigma},
+                {"b", b}
+            }}
+        };
     }
 };

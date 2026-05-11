@@ -17,8 +17,6 @@ public:
     TrapezoidalFunction(double c, double t, double s)
         : center(c), topWidth(t), slope(s)
     {
-
-        // Расчет крайних точек пересечения с осью X
         if (slope != 0.0)
         {
             y = center - (topWidth / 2.0) - (1.0 / slope);
@@ -31,31 +29,29 @@ public:
         }
     }
 
-    // Кусочно-линейный расчет степени принадлежности
     [[nodiscard]] double getMembership(double x) const override
     {
         if (slope == 0.0)
-            return 0.0; // Защита от деления на ноль при инициализации
+            return 0.0;
 
         double leftTop = center - (topWidth / 2.0);
         double rightTop = center + (topWidth / 2.0);
 
-        if (x > z || x < y)
-        {
-            return 0.0;
-        }
-        else if (x >= leftTop && x <= rightTop)
-        {
-            return 1.0;
-        }
-        else if (x >= rightTop && x <= z)
-        {
-            return slope * (z - x);
-        }
-        else if (x >= y && x <= leftTop)
-        {
-            return slope * (x - y);
-        }
+        if (x > z || x < y) return 0.0;
+        else if (x >= leftTop && x <= rightTop) return 1.0;
+        else if (x >= rightTop && x <= z) return slope * (z - x);
+        else if (x >= y && x <= leftTop) return slope * (x - y);
         return 0.0;
+    }
+
+    [[nodiscard]] nlohmann::json serialize() const override {
+        return {
+            {"type", "trapezoidal"},
+            {"params", {
+                {"c", center},
+                {"t", topWidth},
+                {"s", slope}
+            }}
+        };
     }
 };
