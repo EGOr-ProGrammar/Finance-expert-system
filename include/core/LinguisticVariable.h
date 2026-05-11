@@ -8,19 +8,17 @@
 class LinguisticVariable
 {
 private:
-    std::string name;                                                  // Имя переменной (например, "Рентабельность")
-    std::map<std::string, std::shared_ptr<IMembershipFunction>> terms; // Набор термов (например, "Низкая", "Высокая")
+    std::string name;
+    std::map<std::string, std::shared_ptr<IMembershipFunction>> terms;
 
 public:
     explicit LinguisticVariable(std::string varName) : name(std::move(varName)) {}
 
-    // Добавление нового терма и связанной с ним функции принадлежности
     void addTerm(const std::string &termName, std::shared_ptr<IMembershipFunction> function)
     {
         terms[termName] = std::move(function);
     }
 
-    // Получение функции принадлежности по имени терма
     [[nodiscard]] std::shared_ptr<IMembershipFunction> getTerm(const std::string &termName) const
     {
         if (auto it = terms.find(termName); it != terms.end())
@@ -30,6 +28,10 @@ public:
         return nullptr;
     }
 
-    // Возвращает имя лингвистической переменной
     [[nodiscard]] std::string getName() const { return name; }
+    
+    // Геттер для термов (нужен для сериализации и отображения)
+    [[nodiscard]] const std::map<std::string, std::shared_ptr<IMembershipFunction>>& getTerms() const {
+        return terms;
+    }
 };

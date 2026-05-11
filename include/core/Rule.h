@@ -6,7 +6,6 @@
 #include "LinguisticVariable.h"
 #include "operators/ITNorm.h"
 
-// Нечеткое правило вывода вида: "ЕСЛИ x1 это A1 И x2 это A2 ... ТО y это B".
 class Rule
 {
 private:
@@ -23,7 +22,6 @@ public:
         conditions.emplace_back(varName, termName);
     }
 
-    // Вычисление уровня активации правила на основе текущих четких фактов.
     [[nodiscard]] double evaluate(
         const std::map<std::string, double> &facts,
         const std::map<std::string, LinguisticVariable> &variables,
@@ -40,22 +38,22 @@ public:
             auto factIt = facts.find(cond.variableName);
             auto varIt = variables.find(cond.variableName);
 
-            if (factIt == facts.end() || varIt == variables.end())
-            {
-                return 0.0; // Если факт или переменная не найдены, правило не активируется
-            }
+            if (factIt == facts.end() || varIt == variables.end()) return 0.0;
 
             auto termFunc = varIt->second.getTerm(cond.termName);
-            if (!termFunc)
-                return 0.0;
+            if (!termFunc) return 0.0;
 
             membershipValues.push_back(termFunc->getMembership(factIt->second));
         }
 
-        // Агрегирование предпосылки [cite: 242]
         return tNorm.evaluate(membershipValues);
     }
 
     [[nodiscard]] std::string getOutputVariable() const { return outputVariableName; }
     [[nodiscard]] std::string getOutputTerm() const { return outputTermName; }
+    
+    // Геттер для условий (нужен для сериализации и отображения)
+    [[nodiscard]] const std::vector<Condition>& getConditions() const {
+        return conditions;
+    }
 };
