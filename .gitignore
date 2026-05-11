@@ -39,3 +39,5 @@ Thumbs.db
 # отдельно от основной базы знаний
 *.log
 GEMINI.md
+.serena
+.gemini
