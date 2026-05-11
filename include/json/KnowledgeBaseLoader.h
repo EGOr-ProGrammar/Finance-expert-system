@@ -3,20 +3,17 @@
 #include <memory>
 #include <stdexcept>
 #include "json.hpp"
-#include "core/InferenceEngine.h"
+#include "core/KnowledgeBase.h"
 #include "membership/GaussianFunction.h"
 #include "membership/GeneralizedGaussianFunction.h"
 #include "membership/TrapezoidalFunction.h"
 
 using json = nlohmann::json;
 
-// Класс для десериализации базы знаний из формата JSON.
 class KnowledgeBaseLoader
 {
 public:
-    // Загружает конфигурацию и инициализирует InferenceEngine.
-    // engine должен быть предварительно создан со стратегиями агрегации и дефаззификации.
-    static void load(const std::string &filepath, InferenceEngine &engine)
+    static void load(const std::string &filepath, KnowledgeBase &kb)
     {
         std::ifstream file(filepath);
         if (!file.is_open())
@@ -27,7 +24,6 @@ public:
         json j;
         file >> j;
 
-        // 1. Парсинг лингвистических переменных и их термов
         for (const auto &varJson : j.at("variables"))
         {
             LinguisticVariable lv(varJson.at("name").get<std::string>());
@@ -36,14 +32,13 @@ public:
             {
                 std::string termName = termJson.at("name").get<std::string>();
 
-                // Проверяем, является ли это выходной переменной (определен только центр для дефаззификации)
                 if (termJson.contains("center"))
                 {
-                    engine.registerOutputTermCenter(
+                    kb.registerOutputTermCenter(
                         lv.getName(),
                         termName,
                         termJson.at("center").get<double>());
-                    continue; // Пропускаем создание функции принадлежности
+                    continue;
                 }
 
                 std::string type = termJson.at("type").get<std::string>();
@@ -78,10 +73,9 @@ public:
 
                 lv.addTerm(termName, mf);
             }
-            engine.addVariable(lv);
+            kb.addVariable(lv);
         }
 
-        // 2. Парсинг базы нечетких правил вывода [cite: 226-234, 463-466]
         for (const auto &ruleJson : j.at("rules"))
         {
             std::string outVar = ruleJson.at("output").at("variable").get<std::string>();
@@ -95,7 +89,7 @@ public:
                     condJson.at("variable").get<std::string>(),
                     condJson.at("term").get<std::string>());
             }
-            engine.addRule(rule);
+            kb.addRule(rule);
         }
     }
 };
